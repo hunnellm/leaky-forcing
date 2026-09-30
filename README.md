@@ -1,6 +1,4 @@
-# Leaky forcing checker (Q402 referee checks)
 
-Brute-force computation of ℓ-leaky forcing numbers, used for the computational claims in the Q402 follow-up referee report.
 
 ## Files
 
