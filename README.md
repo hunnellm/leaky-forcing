@@ -9,6 +9,7 @@
   - `closure(G, S, leaks)`: pure-Python reference implementation, used for cross-checking
   - `GP(n, k)`, `thm414_set(n, k)`: P(n,k) in the manuscript's labelling, and the Section 4.2 set ∪A_i
 - `leaky_sage.sage`: Sage examples using `graphs.GeneralizedPetersenGraph` and `graphs.StarGraph`.
+- `leaky_sage.py`: pure-Sage implementation; `Z_leaky(G, ell, return_sets=True)` returns all minimum-size ℓ-leaky forcing sets as a list of vertex sets. The default still returns the forcing number.
 - `checks/run_all.py`: reproduces every number in the report. Takes about 1.5 min.
 
 ## Usage

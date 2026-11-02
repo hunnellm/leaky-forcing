@@ -10,6 +10,7 @@ Load directly from GitHub in Sage:
     sage: is_leaky_forcing_set(G, 1, [0, 1, 2, 3])
 
     Z_leaky(G, ell)                 -> Z^(ell)(G), exact, by exhaustive search
+    Z_leaky(G, ell, return_sets=True) -> all minimum-size ell-leaky forcing sets
     is_leaky_forcing_set(G, ell, S) -> (True, []) or (False, first_failing_leak_set)
                                        ([] means S is not even a zero forcing set)
 
@@ -78,8 +79,11 @@ def is_leaky_forcing_set(G, ell, S):
     return False, [V[i] for i in bad]
 
 
-def Z_leaky(G, ell):
-    """The ell-leaky forcing number Z^(ell)(G) by exhaustive search (practical for small n)."""
+def Z_leaky(G, ell, return_sets=False):
+    """Return Z^(ell)(G), or all minimum-size ell-leaky forcing sets when requested.
+
+    With return_sets=True, returns a list of sets of Sage graph vertices.
+    """
     ell = int(ell)
     V, idx, nbr = _setup(G)
     n = len(V)
@@ -90,13 +94,18 @@ def Z_leaky(G, ell):
     base = bin(forced).count("1")
     rest = [i for i in range(n) if not (forced >> i) & 1]
     for extra in range(len(rest) + 1):
+        forcing_sets = []
         for add in combinations(rest, extra):
             Sm = forced
             for i in add:
                 Sm |= 1 << i
             if _first_failing_leaks(nbr, Sm, ell) is None:
-                return base + extra
-    return n
+                if not return_sets:
+                    return base + extra
+                forcing_sets.append({V[i] for i in range(n) if (Sm >> i) & 1})
+        if forcing_sets:
+            return forcing_sets
+    return [] if return_sets else n
 
 
 def closure(G, S, leaks=()):
