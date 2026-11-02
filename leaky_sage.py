@@ -37,6 +37,7 @@ def _setup(G):
 
 def _closure_mask(nbr, blue, leaks):
     """Blue bitmask after exhaustively applying the leaky colour change rule."""
+    blue = int(blue); leaks = int(leaks)
     n = len(nbr)
     changed = True
     while changed:
