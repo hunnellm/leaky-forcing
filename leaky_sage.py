@@ -116,7 +116,37 @@ def closure(G, S, leaks=()):
     Lm = sum(1 << idx[v] for v in set(leaks))
     b = _closure_mask(nbr, Sm, Lm)
     return {V[i] for i in range(len(V)) if (b >> i) & 1}
+def leaky_forts(G, ell, minimal=True):
+    """All ell-leaky forts (inclusion-minimal by default; minimal=False gives all).
+    F is an ell-leaky fort iff F != {} and at most ell vertices outside F
+    have exactly one neighbour in F."""
+    V, idx, nbr = _setup(G)
+    n = len(V)
+    forts = []
+    for F in range(1, 1 << n):
+        bad = 0
+        for v in range(n):
+            if not (F >> v) & 1:
+                w = nbr[v] & F
+                if w and not (w & (w - 1)):
+                    bad += 1
+                    if bad > ell:
+                        break
+        if bad <= ell:
+            forts.append(F)
+    if minimal:
+        forts.sort(key=lambda m: bin(m).count("1"))
+        keep = []
+        for F in forts:
+            if not any(K & F == K for K in keep):
+                keep.append(F)
+        forts = keep
+    return [{V[i] for i in range(n) if (F >> i) & 1} for F in forts]
 
+
+def min_leaky_fort_size(G, ell):
+    """Size of a smallest ell-leaky fort."""
+    return min(len(F) for F in leaky_forts(G, ell, minimal=True))
 
 # ---------- generalized Petersen graphs in the manuscript's labelling ----------
 def GP(n, k):
